@@ -3,56 +3,40 @@ import axios from 'axios';
 import { Form, Field, withFormik } from 'formik';
 import * as Yup from 'yup';
 
-
-const NewUser = ({ errors, touched, values, status }) => {
-  const [users, setUsers] = useState([]);
-  console.log(users);
-
-  useEffect(() => {
-    if (status) {
-      setUsers([...users, status]);
-    }
-  }, [status]);
-
+const NewUser = ({ errors, touched, values, status}) => {
   return (
     <div className="users-form">
-      <h1>User registration Form</h1>
-      <Form>
+      <h1>User registeration form</h1>
+      <Form className="user-form">
         <Field type="text" name="username" placeholder="username" />
-        {touched.username && errors.username && <p className="error">{errors.username}</p>}
-
-        <Field type="text" name="password" placeholder="password" />
-        {touched.password && errors.password && <p className="error">{errors.password}</p>}
-
+         {touched.username && errors.username && <p>{errors.username}</p>}
+        <Field type="password" name="password" placeholder="password" />
+         {touched.password && errors.password && <p>{errors.password}</p>}
         <button type="submit">Submit!</button>
       </Form>
-
     </div>
   );
 };
-
-
-const Users = withFormik({
-  mapPropsToValues({ username, password}) {
+ const Users = withFormik({
+  mapPropsToValues({ username, password }) {
     return {
       username: username || '',
-      password: password || '',
+      password: password || ''
     };
   },
-
   validationSchema: Yup.object().shape({
-    name: Yup.string().required(),
-    password: Yup.string().min(8, "The password must be at least 8 characters").required(),
+    username: Yup.string().required('Please enter your username'),
+    password: Yup.string()
+      .min(6, 'Password needs to be at least 6 characters')
+      .required('Password is required')
   }),
-
-  handleSubmit(values, { setStatus }) {
+  handleSubmit(values) {
     axios
-      .post('http://localhost:5000/api/register', values)
+      .post(`http://localhost:5000/api/register`, values)
       .then(data => {
-        setStatus(data.data);
+        console.log(data);
       })
       .catch(err => console.log(err.response));
   }
 })(NewUser);
-
-export default Users;
+ export default Users;

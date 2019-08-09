@@ -1,33 +1,41 @@
-import React from 'react';
-import './App.css';
-import axios from 'axios';
-import Users from './components/Form'
 
-class App extends React.Component  {
-   constructor () {
-     super()
-     this.state = {
-       resData: []
-     }
-   }
+import React from "react";
+import axios from "axios";
+import "./App.css";
+import Form from "./components/Form";
+import Display from "./components/Display";
 
+ class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      resData: [],
+      showData: false
+    };
+  }
+  onClick = () => {
+    this.setState({ showData: true });
+  };
+  componentDidMount() {
+    this.fetchUserData();
+  }
   fetchUserData = () => {
     axios
       .get(`http://localhost:5000/api/restricted/data`)
-      .then(res => {
-        this.setState({ resData: res.data });
-        console.log(this.state.resData);
+      .then(data => {
+        this.setState({ resData: data.data });
       })
       .catch(err => console.log(err));
-  }
+  };
 
-  render () {
+   render() {
     return (
       <div className="App">
-      <Users />
+        <Form />
+        <Display dataStatus={this.state.showData} btn={this.onClick} data={this.state.resData} />
       </div>
     );
   }
 }
 
-export default App;
+ export default App;
